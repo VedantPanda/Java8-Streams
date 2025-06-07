@@ -6,10 +6,55 @@ public class Main {
 
     public static void main(String[] args) {
 
+        System.out.println(stockIssueDetector());
+
+        productCategoryQuantity();
+
+    }
+
+    private static List<String> stockIssueDetector() {
+
+        Map<String, Integer> productStock = new HashMap<>();
+        productStock.put("P001", 100);
+        productStock.put("P002", 50);
+        productStock.put("P003", 200);
+
+        List<Product> p1 = Arrays.asList(new Product("P001", "iPhone", "Electronics",
+                        30, true, 200),
+                new Product("P002", "Usb cable", "Electronics", 60, true, 200)
+        );
+        Order o1 = new Order("1", 1500, LocalDateTime.now().minusHours(3), p1);
+
+        List<Product> p2 = Arrays.asList(new Product("P003", "iPhone", "Electronics",
+                        50, true, 200),
+                new Product("P002", "Usb cable", "Electronics", 40, true, 200)
+        );
+        Order o2 = new Order("2", 1500, LocalDateTime.now().minusHours(3), p2);
+
+        List<Product> p3 = Arrays.asList(new Product("P003", "iPhone", "Electronics",
+                        30, true, 200),
+                new Product("P001", "Usb cable", "Electronics", 120, true, 200)
+        );
+        Order o3 = new Order("3", 1500, LocalDateTime.now().minusHours(3), p3);
+
+        List<Order> orders = Arrays.asList(o1, o2, o3);
+
+        return orders.stream()
+                .filter(order -> order.getProducts()
+                        .stream()
+                        .anyMatch(product -> productStock.get(product.getProductId()) < product.getQuantity()))
+                .map(Order::getOrderId)
+                .toList();
+
+
+    }
+
+    private static void productCategoryQuantity() {
+
         List<Product> p1 = Arrays.asList(new Product("1", "iPhone", "Electronics", 2, true, 200),
                 new Product("2", "Usb cable", "Electronics", 5, true, 200),
                 new Product("3", "Head phones", "Electronics", 0, false, 200)
-                );
+        );
 
         Order o1 = new Order("1", 1500, LocalDateTime.now().minusHours(3), p1);
 
@@ -45,15 +90,13 @@ public class Main {
                 .flatMap(order -> order.getProducts().stream())
                 .filter(Product::isInStock)
                 .collect(Collectors.groupingBy(Product::getCategory, Collectors.summingInt(Product::getQuantity)))
-                        .entrySet()
-                                .stream()
-                                        .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
-                                                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
-                                                        (a, b) -> a, LinkedHashMap::new));
-
+                .entrySet()
+                .stream()
+                .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder()))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue,
+                        (a, b) -> a, LinkedHashMap::new));
 
         System.out.println(productCategoryQuantityMap);
 
     }
-
 }
