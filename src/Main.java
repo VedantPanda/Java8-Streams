@@ -1,5 +1,6 @@
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Main {
@@ -13,6 +14,16 @@ public class Main {
         groupingByExample();
 
         getSummaryStatistics();
+
+        sliceStreamExample();
+
+        stringJoinExample();
+
+        duplicateElementsInStreamExample();
+
+        duplicateElementsInStreamUsingGroupingBy();
+
+        duplicateElementsInStreamUsingFrequency();
 
     }
 
@@ -130,6 +141,52 @@ public class Main {
         System.out.println(summaryStatistics.getCount());
         System.out.println(summaryStatistics.getMin());
         System.out.println(summaryStatistics.getSum());
+    }
+
+    private static void sliceStreamExample() {
+        List<Order> orders = getOrders();
+        List<Integer> products = orders.stream().flatMap(order -> order.getProducts().stream())
+                .map(Product::getQuantity).sorted().toList();
+        System.out.println(products.stream().skip(1).limit(2).toList());
+    }
+
+    private static void stringJoinExample() {
+        List<String> stringList = Arrays.asList("Virat", "Rohit", "Bumrah", "Sky");
+        String names = stringList.stream().map(String::toUpperCase).collect(Collectors.joining(","));
+        System.out.println(names);
+    }
+
+    private static void duplicateElementsInStreamExample() {
+        List<Order> orders = getOrders();
+        Set<String> categories = new HashSet<>();
+        Set<String> duplicateCategories = orders.stream().flatMap(order -> order.getProducts().stream())
+                .map(Product::getCategory)
+                .filter(category -> !categories.add(category))
+                .collect(Collectors.toSet());
+        System.out.println(duplicateCategories);
+    }
+
+    private static void duplicateElementsInStreamUsingGroupingBy() {
+        List<Order> orders = getOrders();
+        Map<String, Long> categoryOccurenceMap = orders.stream().flatMap(order -> order.getProducts().stream())
+                .map(Product::getCategory)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        Set<String> duplicateCategories = categoryOccurenceMap.entrySet()
+                .stream()
+                .filter(category -> category.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+        System.out.println(duplicateCategories);
+    }
+
+    private static void duplicateElementsInStreamUsingFrequency() {
+        List<Order> orders = getOrders();
+        List<String> categories = orders.stream().flatMap(order -> order.getProducts().stream())
+                .map(Product::getCategory).toList();
+        Set<String> duplicateCategories = categories.stream()
+                .filter(category -> Collections.frequency(categories, category) > 1)
+                .collect(Collectors.toSet());
+        System.out.println(duplicateCategories);
     }
 
 }
