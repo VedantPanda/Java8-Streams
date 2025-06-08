@@ -25,6 +25,8 @@ public class Main {
 
         duplicateElementsInStreamUsingFrequency();
 
+        findEmployeeByDescendingSalary();
+
     }
 
     private static List<String> stockIssueDetector() {
@@ -187,6 +189,25 @@ public class Main {
                 .filter(category -> Collections.frequency(categories, category) > 1)
                 .collect(Collectors.toSet());
         System.out.println(duplicateCategories);
+    }
+
+    private static void findEmployeeByDescendingSalary() {
+
+        Employee e1 = new Employee(1, 500);
+        Employee e2 = new Employee(2, 1000);
+        Employee e3 = new Employee(3, 1500);
+        Employee e4 = new Employee(4, 2000);
+        Employee e5 = new Employee(5, 2500);
+        Employee e6 = new Employee(6, 3000);
+        Employee e7 = new Employee(7, 3500);
+
+        List<Employee> employees = Arrays.asList(e1, e2, e3, e4, e5, e6, e7);
+
+        List<Employee> employeeBySalary = employees.stream()
+                .sorted((a, b) -> Math.toIntExact(b.getSalary() - a.getSalary())).skip(3).toList();
+
+        employeeBySalary.forEach(employee -> System.out.println(employee.toString()));
+
     }
 
 }
