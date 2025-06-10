@@ -2,10 +2,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception{
 
         System.out.println(stockIssueDetector());
 
@@ -26,6 +27,18 @@ public class Main {
         duplicateElementsInStreamUsingFrequency();
 
         findEmployeeByDescendingSalary();
+
+        findSecondSmallest();
+
+        findSecondSmallestWithDuplicates();
+
+        findCommonElements();
+
+        findCommonElementsWithDuplicates();
+
+        reverseArray();
+
+        findLengthOfLargestString();
 
     }
 
@@ -208,6 +221,58 @@ public class Main {
 
         employeeBySalary.forEach(employee -> System.out.println(employee.toString()));
 
+    }
+
+    private static void findSecondSmallest() throws Exception {
+        int[] arr = {5, 2, 8, 3, 1};
+        int secondSmallest = Arrays.stream(arr).sorted().skip(1).findFirst()
+                .orElseThrow(() -> new Exception("Array does not have second smallest element"));
+        System.out.println(secondSmallest);
+    }
+
+    private static void findSecondSmallestWithDuplicates() throws Exception {
+        int[] arr = {5, 2, 8, 3, 1, 1};
+        int secondSmallest = Arrays.stream(arr).distinct().sorted().skip(1).findFirst()
+                .orElseThrow(() -> new Exception("Array does not have second smallest element"));
+        System.out.println(secondSmallest);
+    }
+
+    private static void findCommonElements() {
+        int[] arr1 = {1, 2, 3, 4, 5, 5};
+        int[] arr2 = {4, 5, 6, 7, 8};
+        int[] intersection = Arrays.stream(arr1).filter(num -> Arrays.stream(arr2).anyMatch(n -> n==num)).toArray();
+        for(int el : intersection) {
+            System.out.print(el+" ");
+        }
+    }
+
+    private static void findCommonElementsWithDuplicates() {
+        int[] arr1 = {1, 2, 3, 4, 5, 5};
+        int[] arr2 = {4, 5, 6, 7, 8};
+        int[] intersection = Arrays.stream(arr1).distinct().filter(num -> Arrays.stream(arr2).anyMatch(n -> n==num)).toArray();
+        for(int el : intersection) {
+            System.out.print(el+" ");
+        }
+        System.out.println();
+    }
+
+    private static void reverseArray() {
+        int[] arr1 = {1, 2, 3, 4, 5};
+        IntStream.range(0, arr1.length/2).forEach(i -> {
+            int temp = arr1[i];
+            arr1[i] = arr1[arr1.length-i-1];
+            arr1[arr1.length-i-1] = temp;
+        });
+        for(int el : arr1) {
+            System.out.print(el+" ");
+        }
+        System.out.println();
+    }
+
+    private static void findLengthOfLargestString() {
+        List<String> fruits = Arrays.asList("Apple", "Banana", "Avocado", "Apricot", "Grapes");
+        int maxLength = fruits.stream().mapToInt(String::length).max().orElse(0);
+        System.out.println(maxLength);
     }
 
 }
